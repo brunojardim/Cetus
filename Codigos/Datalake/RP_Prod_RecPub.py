@@ -100,10 +100,6 @@ def CetusReadS3CSVFile(nm_bucket,path_file,sep=','):
 ################################################################################################
 #------------------------ FIM FUNCOES ----------------------------------------------------------    
 
-import datetime
-now = datetime.datetime.now() - datetime.timedelta(0,0,0,0,3)
-anoref = now.strftime("%Y")
-
 import requests
 from bs4 import BeautifulSoup
 import re
@@ -123,7 +119,7 @@ datinfo = ano+mes+dia
 
 print('RP_Dev_Jupyter_RecPub')
 print('Prod - Carga de referencia: ',datinfo)
-dados = CetusLakeReceitaPublicaGov(anoref,exec_lake = 'prod')
+dados = CetusLakeReceitaPublicaGov(ano,exec_lake = 'prod')
 nm_s3_file = 'RP_Lake_RecPub_'+str(datinfo)+'.csv'
 s3_path = 'projeto-bigdata-cetus/datalake/ReceitasPublicas/'
 CetusSalvaCSVS3(dados,nm_s3_file,s3_path)
