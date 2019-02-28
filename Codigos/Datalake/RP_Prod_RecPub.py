@@ -102,13 +102,29 @@ def CetusReadS3CSVFile(nm_bucket,path_file,sep=','):
 
 import datetime
 now = datetime.datetime.now() - datetime.timedelta(0,0,0,0,3)
-anomesdia = now.strftime("%Y%m%d")
 anoref = now.strftime("%Y")
+
+import requests
+from bs4 import BeautifulSoup
+import re
+URL = 'http://www.portaltransparencia.gov.br/origem-dos-dados'
+page = requests.get(URL)
+soup = BeautifulSoup(page.content, 'html.parser')
+aux = soup.find_all('button', id="botao-aba-receitas")
+ddmmaaaa = re.sub("[^\d\.]", "", str(aux))[-8:]
+#print('Data em formato ddmmaaaa:', ddmmaaaa)
+ano = re.sub("[^\d\.]", "", str(ddmmaaaa))[-4:]
+mes = re.sub("[^\d\.]", "", str(ddmmaaaa))[2:-4]
+dia = re.sub("[^\d\.]", "", str(ddmmaaaa))[:-6]
+#print('Ano->',ano)
+#print('Mês->',mes)
+#print('Dia->',dia)
+datinfo = ano+mes+dia
 
 print('RP_Dev_Jupyter_RecPub')
 print('Prod - Carga de referencia: ',datinfo)
 dados = CetusLakeReceitaPublicaGov(anoref,exec_lake = 'prod')
-nm_s3_file = 'RP_Lake_RecPub_'+str(anomesdia)+'.csv'
+nm_s3_file = 'RP_Lake_RecPub_'+str(datinfo)+'.csv'
 s3_path = 'projeto-bigdata-cetus/datalake/ReceitasPublicas/'
 CetusSalvaCSVS3(dados,nm_s3_file,s3_path)
 print('Carga Efetuada Com Sucesso')
