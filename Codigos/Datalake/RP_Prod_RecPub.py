@@ -101,25 +101,6 @@ def CetusReadS3CSVFile(nm_bucket,path_file,sep=','):
 ################################################################################################
 #------------------------ FIM FUNCOES ----------------------------------------------------------    
 
-#HISTORICO
-#Inserir ano do histórico a ser executado:
-ano=2018
-datinfo = str(ano) + '12' + '31' 
-
-import datetime
-now = datetime.datetime.now() - datetime.timedelta(0,0,0,0,3)
-anomesdia = now.strftime("%Y%m%d")
-
-print('RP_Dev_Jupyter_RecPub')
-print('Hist - Carga de referencia: ',datinfo)
-dados = CetusLakeReceitaPublicaGov(anomesdia,ano,exec_lake = 'hist')
-nm_s3_file = 'RP_Lake_RecPub_'+str(datinfo)+'.csv'
-s3_path = 'projeto-bigdata-cetus/datalake/ReceitasPublicas/'
-CetusSalvaCSVS3(dados,nm_s3_file,s3_path)
-print('Carga Histórica Efetuada Com Sucesso')
-
-
-
 #PRODUCAO
 import requests
 from bs4 import BeautifulSoup
@@ -142,7 +123,6 @@ import datetime
 now = datetime.datetime.now() - datetime.timedelta(0,0,0,0,3)
 anomesdia = now.strftime("%Y%m%d")
 
-print('RP_Dev_Jupyter_RecPub')
 print('Prod - Carga de referencia: ',datinfo)
 dados = CetusLakeReceitaPublicaGov(anomesdia,ano,exec_lake = 'prod')
 nm_s3_file = 'RP_Lake_RecPub_'+str(datinfo)+'.csv'
