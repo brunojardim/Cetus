@@ -11,7 +11,7 @@
 #############################################################################
 # ------------------------ INICIO FUNCOES -----------------------------------
 
-def CetusLakeReceitaPublicaGov(ANO_INFO,exec_lake = 'prod'):
+def CetusLakeReceitaPublicaGov(dataproc,ANO_INFO,exec_lake = 'prod'):
     
     #---- Pagina de Extracao -----------
     # http://www.portaltransparencia.gov.br/download-de-dados/receitas
@@ -63,6 +63,7 @@ def CetusLakeReceitaPublicaGov(ANO_INFO,exec_lake = 'prod'):
         result = chardet.detect(f.read())  # or readline if the file is large
     df = pd.read_csv('dados_receita_' + str(ANO_INFO) +'/'+str(ANO_INFO)+'_ReceitaPublica.zip.csv', encoding=result['encoding'], error_bad_lines=False,sep=';', engine='python')
     df['DT_INFO'] = datinfo
+	df['DT_PROC'] = dataproc
     return df
 
 
@@ -117,9 +118,13 @@ dia = re.sub("[^\d\.]", "", str(ddmmaaaa))[:-6]
 #print('Dia->',dia)
 datinfo = ano+mes+dia
 
+import datetime
+now = datetime.datetime.now() - datetime.timedelta(0,0,0,0,3)
+anomesdia = now.strftime("%Y%m%d")
+
 print('RP_Dev_Jupyter_RecPub')
 print('Prod - Carga de referencia: ',datinfo)
-dados = CetusLakeReceitaPublicaGov(ano,exec_lake = 'prod')
+dados = CetusLakeReceitaPublicaGov(anomesdia,ano,exec_lake = 'prod')
 nm_s3_file = 'RP_Lake_RecPub_'+str(datinfo)+'.csv'
 s3_path = 'projeto-bigdata-cetus/datalake/ReceitasPublicas/'
 CetusSalvaCSVS3(dados,nm_s3_file,s3_path)
